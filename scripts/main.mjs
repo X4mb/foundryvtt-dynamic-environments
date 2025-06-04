@@ -98,9 +98,8 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
             <p class="hint">Check this if the scene represents an outdoor environment where weather penalties apply.</p>
         </div>
     `;
-    // Insert into the 'details' tab of the scene config. Adjust if this tab doesn't exist
-    // or if you prefer a different location.
-    html.find('.tab[data-tab="details"]').append(htmlContent);
+    // Changed: Target the 'Navigation Name' input field, find its parent form-group, and insert after it.
+    html.find('input[name="navigation"]').closest('.form-group').after(htmlContent);
     app.setPosition({height: "auto"}); // Adjust app height if needed
 });
 
