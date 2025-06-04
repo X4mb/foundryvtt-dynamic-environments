@@ -1,6 +1,6 @@
 // This hook runs very early, ideal for registering settings.
 Hooks.on("init", () => {
-    console.log("Dynamic Environment Control | Initializing module...");
+    console.log("Dynamic Environment Control | Initializing module..."); // [cite: 26]
 
     game.settings.register("foundryvtt-dynamic-environments", "enableWeatherMovementPenalties", {
         name: "dynamic-environment-control.Setting.EnableWeatherMovementPenalties.Name",
@@ -75,9 +75,11 @@ Hooks.on("init", () => {
 
 Hooks.on("ready", () => {
     if (game.modules.get("foundryvtt-dynamic-environments")?.active) {
-        console.log("Dynamic Environment Control | Module is active and ready!");
+        console.log("Dynamic Environment Control | Module is active and ready!"); // [cite: 125]
 
-        if (canvas.scene && canvas.scene.data.weather) {
+        // This line caused an error in previous versions: "canvas.scene.data is undefined" [cite: 127]
+        // This check ensures canvas.scene and canvas.scene.data exist before trying to access it.
+        if (canvas.scene && canvas.scene.data && canvas.scene.data.weather) {
             game.settings.set("foundryvtt-dynamic-environments", "currentWorldWeather", canvas.scene.data.weather);
         }
     }
@@ -97,8 +99,8 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
         </div>
     `;
 
-    // NEW: Target the form-group containing the label whose 'for' attribute includes "WeatherEffect"
-    const weatherEffectFormGroup = html.find('label[for*="WeatherEffect"]').closest('.form-group');
+    // FIX: Wrap the 'html' element with jQuery to enable jQuery methods like .find()
+    const weatherEffectFormGroup = $(html).find('label[for*="WeatherEffect"]').closest('.form-group');
 
     if (weatherEffectFormGroup.length > 0) {
         weatherEffectFormGroup.after(htmlContent);
@@ -106,7 +108,7 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
         // Log an error if the target element isn't found
         console.error("Dynamic Environment Control | Could not find the 'Weather Effect' form group to insert 'Is Indoor Scene?' checkbox. Check Foundry VTT HTML structure.");
     }
-    app.setPosition({height: "auto"}); // Adjust app height if needed
+    // app.setPosition({height: "auto"}); // You might not need this if Foundry handles resize automatically
 });
 
 
