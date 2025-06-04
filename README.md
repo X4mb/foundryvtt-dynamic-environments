@@ -21,4 +21,4 @@ This module is actively under development. Contributions and feedback are welcom
 
 ## License
 
-[MIT License](LICENSE) (or your chosen license)
+[MIT License](LICENSE)

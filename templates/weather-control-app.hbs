@@ -1,0 +1,10 @@
+<form class="flexcol">
+    <div class="form-group">
+        <label>{{i18n "CurrentWeather"}}</label>
+        <select name="weatherType">
+            {{#each weatherOptions}}
+            <option value="{{this.key}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+            {{/each}}
+        </select>
+    </div>
+</form>

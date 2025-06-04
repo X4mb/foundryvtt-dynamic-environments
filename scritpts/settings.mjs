@@ -5,18 +5,16 @@ import { MODULE_ID } from "./main.mjs";
  * Register all module settings
  */
 export const registerSettings = function() {
-    // Example: Enable/Disable Weather Masking
     game.settings.register(MODULE_ID, 'enableWeatherMasking', {
         name: game.i18n.localize(`${MODULE_ID}.Settings.EnableWeatherMasking.Name`),
         hint: game.i18n.localize(`${MODULE_ID}.Settings.EnableWeatherMasking.Hint`),
-        scope: 'world', // 'world' or 'client'
-        config: true,   // Show in the module settings
+        scope: 'world',
+        config: true,
         type: Boolean,
         default: true,
-        requiresReload: false // Does not require a Foundry reload to take effect
+        requiresReload: false
     });
 
-    // Example: Enable/Disable Movement Penalties
     game.settings.register(MODULE_ID, 'enableMovementPenalties', {
         name: game.i18n.localize(`${MODULE_ID}.Settings.EnableMovementPenalties.Name`),
         hint: game.i18n.localize(`${MODULE_ID}.Settings.EnableMovementPenalties.Hint`),
@@ -27,8 +25,6 @@ export const registerSettings = function() {
         requiresReload: false
     });
 
-    // Setting for Current Weather Condition (GM controlled)
-    // We'll use a dropdown of predefined weather types, extensible later.
     game.settings.register(MODULE_ID, 'currentWeather', {
         name: game.i18n.localize(`${MODULE_ID}.Settings.CurrentWeather.Name`),
         hint: game.i18n.localize(`${MODULE_ID}.Settings.CurrentWeather.Hint`),
@@ -41,25 +37,26 @@ export const registerSettings = function() {
             'heavyRain': game.i18n.localize(`${MODULE_ID}.Weather.HeavyRain`),
             'snow': game.i18n.localize(`${MODULE_ID}.Weather.Snow}`),
             'blizzard': game.i18n.localize(`${MODULE_ID}.Weather.Blizzard}`)
-            // Add more weather types here as needed
         },
         default: 'clear',
         onChange: value => {
-            // This is where we'll trigger FXMaster updates and movement penalty re-evaluation
-            console.log(`${MODULE_ID} | Current Weather changed to: ${value}`);
-            // TODO: Trigger FXMaster update and movement re-evaluation here
             Hooks.call(`dynamicEnvironmentControl.weatherChanged`, value);
         }
     });
 
-    // Example: Movement Penalty for Light Rain (for PF2e, this would be a speed reduction)
+    // --- Movement Penalty Settings ---
+    // PF2e typically uses "difficult terrain" (2 squares per 1 moved), which effectively halves speed.
+    // These settings allow for configurable flat penalties for simplicity and customization.
+    // Consider setting them to 0 if you prefer to enforce "difficult terrain" via other means,
+    // or if the fixed penalty is too strong.
+
     game.settings.register(MODULE_ID, 'lightRainSpeedPenalty', {
         name: game.i18n.localize(`${MODULE_ID}.Settings.LightRainSpeedPenalty.Name`),
         hint: game.i18n.localize(`${MODULE_ID}.Settings.LightRainSpeedPenalty.Hint`),
         scope: 'world',
         config: true,
         type: Number,
-        default: 5, // Example: -5 feet movement speed
+        default: 0, // Default to 0 as light rain usually no penalty
         range: {
             min: 0,
             max: 30,
@@ -67,8 +64,45 @@ export const registerSettings = function() {
         }
     });
 
-    // THESE SETTINGS NEED TO BE ADDED IN THE QUESTIONS
-    // game.settings.register(MODULE_ID, 'heavyRainSpeedPenalty', { ... });
-    // game.settings.register(MODULE_ID, 'snowSpeedPenalty', { ... });
-    // game.settings.register(MODULE_ID, 'blizzardSpeedPenalty', { ... });
+    game.settings.register(MODULE_ID, 'heavyRainSpeedPenalty', {
+        name: game.i18n.localize(`${MODULE_ID}.Settings.HeavyRainSpeedPenalty.Name`),
+        hint: game.i18n.localize(`${MODULE_ID}.Settings.HeavyRainSpeedPenalty.Hint`),
+        scope: 'world',
+        config: true,
+        type: Number,
+        default: 5, // A small penalty for heavy rain
+        range: {
+            min: 0,
+            max: 30,
+            step: 5
+        }
+    });
+
+    game.settings.register(MODULE_ID, 'snowSpeedPenalty', {
+        name: game.i18n.localize(`${MODULE_ID}.Settings.SnowSpeedPenalty.Name`),
+        hint: game.i18n.localize(`${MODULE_ID}.Settings.SnowSpeedPenalty.Hint`),
+        scope: 'world',
+        config: true,
+        type: Number,
+        default: 10, // More significant for snow
+        range: {
+            min: 0,
+            max: 30,
+            step: 5
+        }
+    });
+
+    game.settings.register(MODULE_ID, 'blizzardSpeedPenalty', {
+        name: game.i18n.localize(`${MODULE_ID}.Settings.BlizzardSpeedPenalty.Name`),
+        hint: game.i18n.localize(`${MODULE_ID}.Settings.BlizzardSpeedPenalty.Hint`),
+        scope: 'world',
+        config: true,
+        type: Number,
+        default: 20, // A heavy penalty for blizzards
+        range: {
+            min: 0,
+            max: 30,
+            step: 5
+        }
+    });
 };

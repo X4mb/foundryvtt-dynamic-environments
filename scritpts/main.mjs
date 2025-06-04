@@ -34,7 +34,7 @@ Hooks.once('ready', async function() {
 
     // Check for FXMaster dependency
     if (!game.modules.get('fxmaster')?.active) {
-        ui.notifications.error(`${MODULE_ID} | FXMaster module is not active. Please enable it for full functionality.`, { permanent: true });
+        ui.notifications.error(game.i18n.localize(`${MODULE_ID}.Notifications.FXMasterNotActive`), { permanent: true });
         error("FXMaster module is not active!");
         return;
     }

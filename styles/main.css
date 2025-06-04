@@ -1,2 +1,28 @@
 /* styles/main.css */
-/* Add any custom styling for your module's UI here later */
+
+/* Styling for the Weather Control App */
+.dynamic-environment-control.app.weather-control {
+    min-width: 250px;
+}
+
+.dynamic-environment-control.app.weather-control .window-content {
+    padding: 10px;
+}
+
+.dynamic-environment-control.app.weather-control .form-group {
+    margin-bottom: 10px;
+}
+
+.dynamic-environment-control.app.weather-control label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.dynamic-environment-control.app.weather-control select {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #7a7971;
+    background: rgba(0, 0, 0, 0.05);
+    color: #444;
+}
