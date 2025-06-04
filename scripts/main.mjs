@@ -83,18 +83,16 @@ Hooks.on("ready", () => {
     }
 });
 
-// REMOVED: renderSceneConfig hook for direct HTML injection.
-// NEW: Using activateListeners to ensure elements are fully rendered.
-Hooks.on("renderSceneConfig", (app, html, data) => {
-    // This hook is still useful for initial app setup.
-    // The actual DOM manipulation will happen in activateListeners.
-    // Ensure the app position is adjusted if needed.
-    // app.setPosition({height: "auto"}); // Re-enable if the dialog doesn't resize correctly
-});
+// Hooks.on("renderSceneConfig", ...) is no longer used for direct HTML injection.
 
 Hooks.on("activateListeners", (app, html) => {
+    // DIAGNOSTIC: Log immediately to see if this hook is firing at all
+    console.log("Dynamic Environment Control | activateListeners hook fired for application:", app.constructor.name, app);
+
     // Only proceed if this is the SceneConfig application
     if (app instanceof SceneConfig) {
+        console.log("Dynamic Environment Control | activateListeners specifically for SceneConfig!");
+
         const isIndoorScene = app.document.getFlag("foundryvtt-dynamic-environments", "isIndoorScene");
         const checked = isIndoorScene === true ? "checked" : "";
         const htmlContent = `
@@ -107,16 +105,17 @@ Hooks.on("activateListeners", (app, html) => {
             </div>
         `;
 
-        // Attempt to find the Weather Effect form group and insert the checkbox
-        // This hook runs AFTER the HTML is rendered and listeners are active, making it more reliable.
-        const weatherEffectFormGroup = html.find('label[for*="WeatherEffect"]').closest('.form-group');
+        const ambienceTab = html.find('.tab[data-tab="ambient"]'); // Still use find here, as 'html' is the root of the app.
 
-        if (weatherEffectFormGroup.length > 0) {
-            weatherEffectFormGroup.after(htmlContent);
-            console.log("Dynamic Environment Control | 'Is Indoor Scene?' checkbox injected successfully into Scene Config.");
+        if (ambienceTab.length > 0) {
+            ambienceTab.append(htmlContent);
+            console.log("Dynamic Environment Control | 'Is Indoor Scene?' checkbox injected successfully into Ambience tab.");
         } else {
-            console.error("Dynamic Environment Control | Could not find the 'Weather Effect' form group in activateListeners. Check Foundry VTT HTML structure.");
+            console.error("Dynamic Environment Control | Could not find the 'Ambience' tab to insert checkbox. Check Foundry VTT HTML structure.");
         }
+    } else {
+        // Log if it's a different application, to help understand what's triggering the hook
+        console.log("Dynamic Environment Control | activateListeners for non-SceneConfig app:", app.constructor.name);
     }
 });
 
