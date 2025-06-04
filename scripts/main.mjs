@@ -97,16 +97,18 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
         </div>
     `;
 
-    // DIAGNOSTIC TEST: Attempt to inject into the main form element itself
-    const formElement = $(html).find('form'); // This selects the first <form> element within the application's HTML
+    // NEW ATTEMPT: Directly append to the Ambience tab
+    // This assumes $(html) correctly represents the application's window, and .find('.tab[data-tab="ambient"]') works
+    const ambienceTab = $(html).find('.tab[data-tab="ambient"]');
 
-    if (formElement.length > 0) {
-        formElement.append(htmlContent);
-        console.log("Dynamic Environment Control | Checkbox injected into general form area for testing.");
+    if (ambienceTab.length > 0) {
+        ambienceTab.append(htmlContent);
+        console.log("Dynamic Environment Control | Checkbox injected into Ambience tab.");
     } else {
-        console.error("Dynamic Environment Control | Could not find the main form element to insert checkbox. This is unexpected.");
+        console.error("Dynamic Environment Control | Could not find the 'Ambience' tab to insert checkbox. Check Foundry VTT HTML structure.");
     }
-    // app.setPosition({height: "auto"}); // You might not need this if Foundry handles resize automatically
+
+    // app.setPosition({height: "auto"}); // Re-enable if the dialog doesn't resize correctly
 });
 
 
