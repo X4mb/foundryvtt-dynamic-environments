@@ -1,6 +1,6 @@
 // This hook runs very early, ideal for registering settings.
 Hooks.on("init", () => {
-    console.log("Dynamic Environment Control | Initializing module..."); // [cite: 26]
+    console.log("Dynamic Environment Control | Initializing module...");
 
     game.settings.register("foundryvtt-dynamic-environments", "enableWeatherMovementPenalties", {
         name: "dynamic-environment-control.Setting.EnableWeatherMovementPenalties.Name",
@@ -75,10 +75,8 @@ Hooks.on("init", () => {
 
 Hooks.on("ready", () => {
     if (game.modules.get("foundryvtt-dynamic-environments")?.active) {
-        console.log("Dynamic Environment Control | Module is active and ready!"); // [cite: 125]
+        console.log("Dynamic Environment Control | Module is active and ready!");
 
-        // This line caused an error in previous versions: "canvas.scene.data is undefined" [cite: 127]
-        // This check ensures canvas.scene and canvas.scene.data exist before trying to access it.
         if (canvas.scene && canvas.scene.data && canvas.scene.data.weather) {
             game.settings.set("foundryvtt-dynamic-environments", "currentWorldWeather", canvas.scene.data.weather);
         }
@@ -99,14 +97,14 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
         </div>
     `;
 
-    // FIX: Wrap the 'html' element with jQuery to enable jQuery methods like .find()
-    const weatherEffectFormGroup = $(html).find('label[for*="WeatherEffect"]').closest('.form-group');
+    // DIAGNOSTIC TEST: Attempt to inject into the main form element itself
+    const formElement = $(html).find('form'); // This selects the first <form> element within the application's HTML
 
-    if (weatherEffectFormGroup.length > 0) {
-        weatherEffectFormGroup.after(htmlContent);
+    if (formElement.length > 0) {
+        formElement.append(htmlContent);
+        console.log("Dynamic Environment Control | Checkbox injected into general form area for testing.");
     } else {
-        // Log an error if the target element isn't found
-        console.error("Dynamic Environment Control | Could not find the 'Weather Effect' form group to insert 'Is Indoor Scene?' checkbox. Check Foundry VTT HTML structure.");
+        console.error("Dynamic Environment Control | Could not find the main form element to insert checkbox. This is unexpected.");
     }
     // app.setPosition({height: "auto"}); // You might not need this if Foundry handles resize automatically
 });
