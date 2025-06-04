@@ -83,32 +83,41 @@ Hooks.on("ready", () => {
     }
 });
 
-// Hook to add a checkbox to the Scene Configuration for "Is Indoor Scene?"
+// REMOVED: renderSceneConfig hook for direct HTML injection.
+// NEW: Using activateListeners to ensure elements are fully rendered.
 Hooks.on("renderSceneConfig", (app, html, data) => {
-    const isIndoorScene = app.document.getFlag("foundryvtt-dynamic-environments", "isIndoorScene");
-    const checked = isIndoorScene === true ? "checked" : "";
-    const htmlContent = `
-        <div class="form-group">
-            <label>${game.i18n.localize("dynamic-environment-control.Setting.IsIndoorScene.Name")}</label>
-            <div class="form-fields">
-                <input type="checkbox" name="flags.foundryvtt-dynamic-environments.isIndoorScene" data-dtype="Boolean" ${checked}>
-            </div>
-            <p class="hint">${game.i18n.localize("dynamic-environment-control.Setting.IsIndoorScene.Hint")}</p>
-        </div>
-    `;
-
-    // NEW ATTEMPT: Directly append to the Ambience tab
-    // This assumes $(html) correctly represents the application's window, and .find('.tab[data-tab="ambient"]') works
-    const ambienceTab = $(html).find('.tab[data-tab="ambient"]');
-
-    if (ambienceTab.length > 0) {
-        ambienceTab.append(htmlContent);
-        console.log("Dynamic Environment Control | Checkbox injected into Ambience tab.");
-    } else {
-        console.error("Dynamic Environment Control | Could not find the 'Ambience' tab to insert checkbox. Check Foundry VTT HTML structure.");
-    }
-
+    // This hook is still useful for initial app setup.
+    // The actual DOM manipulation will happen in activateListeners.
+    // Ensure the app position is adjusted if needed.
     // app.setPosition({height: "auto"}); // Re-enable if the dialog doesn't resize correctly
+});
+
+Hooks.on("activateListeners", (app, html) => {
+    // Only proceed if this is the SceneConfig application
+    if (app instanceof SceneConfig) {
+        const isIndoorScene = app.document.getFlag("foundryvtt-dynamic-environments", "isIndoorScene");
+        const checked = isIndoorScene === true ? "checked" : "";
+        const htmlContent = `
+            <div class="form-group">
+                <label>${game.i18n.localize("dynamic-environment-control.Setting.IsIndoorScene.Name")}</label>
+                <div class="form-fields">
+                    <input type="checkbox" name="flags.foundryvtt-dynamic-environments.isIndoorScene" data-dtype="Boolean" ${checked}>
+                </div>
+                <p class="hint">${game.i18n.localize("dynamic-environment-control.Setting.IsIndoorScene.Hint")}</p>
+            </div>
+        `;
+
+        // Attempt to find the Weather Effect form group and insert the checkbox
+        // This hook runs AFTER the HTML is rendered and listeners are active, making it more reliable.
+        const weatherEffectFormGroup = html.find('label[for*="WeatherEffect"]').closest('.form-group');
+
+        if (weatherEffectFormGroup.length > 0) {
+            weatherEffectFormGroup.after(htmlContent);
+            console.log("Dynamic Environment Control | 'Is Indoor Scene?' checkbox injected successfully into Scene Config.");
+        } else {
+            console.error("Dynamic Environment Control | Could not find the 'Weather Effect' form group in activateListeners. Check Foundry VTT HTML structure.");
+        }
+    }
 });
 
 
