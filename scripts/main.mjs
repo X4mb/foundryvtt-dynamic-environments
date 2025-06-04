@@ -83,40 +83,32 @@ Hooks.on("ready", () => {
     }
 });
 
-// Hooks.on("renderSceneConfig", ...) is no longer used for direct HTML injection.
-
-Hooks.on("activateListeners", (app, html) => {
-    // DIAGNOSTIC: Log immediately to see if this hook is firing at all
-    console.log("Dynamic Environment Control | activateListeners hook fired for application:", app.constructor.name, app);
-
-    // Only proceed if this is the SceneConfig application
-    if (app instanceof SceneConfig) {
-        console.log("Dynamic Environment Control | activateListeners specifically for SceneConfig!");
-
-        const isIndoorScene = app.document.getFlag("foundryvtt-dynamic-environments", "isIndoorScene");
-        const checked = isIndoorScene === true ? "checked" : "";
-        const htmlContent = `
-            <div class="form-group">
-                <label>${game.i18n.localize("dynamic-environment-control.Setting.IsIndoorScene.Name")}</label>
-                <div class="form-fields">
-                    <input type="checkbox" name="flags.foundryvtt-dynamic-environments.isIndoorScene" data-dtype="Boolean" ${checked}>
-                </div>
-                <p class="hint">${game.i18n.localize("dynamic-environment-control.Setting.IsIndoorScene.Hint")}</p>
+// Revert to renderSceneConfig for injection, but use a highly reliable target.
+Hooks.on("renderSceneConfig", (app, html, data) => {
+    const isIndoorScene = app.document.getFlag("foundryvtt-dynamic-environments", "isIndoorScene");
+    const checked = isIndoorScene === true ? "checked" : "";
+    const htmlContent = `
+        <div class="form-group">
+            <label>${game.i18n.localize("dynamic-environment-control.Setting.IsIndoorScene.Name")}</label>
+            <div class="form-fields">
+                <input type="checkbox" name="flags.foundryvtt-dynamic-environments.isIndoorScene" data-dtype="Boolean" ${checked}>
             </div>
-        `;
+            <p class="hint">${game.i18n.localize("dynamic-environment-control.Setting.IsIndoorScene.Hint")}</p>
+        </div>
+    `;
 
-        const ambienceTab = html.find('.tab[data-tab="ambient"]'); // Still use find here, as 'html' is the root of the app.
+    // NEW STRATEGY: Inject into the footer of the form. This is typically always present.
+    // The footer.form-footer is usually the last element before the closing form tag.
+    const formFooter = $(html).find('footer.form-footer');
 
-        if (ambienceTab.length > 0) {
-            ambienceTab.append(htmlContent);
-            console.log("Dynamic Environment Control | 'Is Indoor Scene?' checkbox injected successfully into Ambience tab.");
-        } else {
-            console.error("Dynamic Environment Control | Could not find the 'Ambience' tab to insert checkbox. Check Foundry VTT HTML structure.");
-        }
+    if (formFooter.length > 0) {
+        formFooter.before(htmlContent); // Insert BEFORE the footer buttons
+        console.log("Dynamic Environment Control | 'Is Indoor Scene?' checkbox injected into form footer (fallback location).");
     } else {
-        // Log if it's a different application, to help understand what's triggering the hook
-        console.log("Dynamic Environment Control | activateListeners for non-SceneConfig app:", app.constructor.name);
+        // This indicates a very fundamental problem with the HTML structure of the app.
+        console.error("Dynamic Environment Control | Could not find the form footer. Cannot inject checkbox.");
     }
+    // app.setPosition({height: "auto"}); // Re-enable if the dialog doesn't resize correctly
 });
 
 
