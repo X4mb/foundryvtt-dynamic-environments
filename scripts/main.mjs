@@ -96,8 +96,16 @@ Hooks.on("renderSceneConfig", (app, html, data) => {
             <p class="hint">${game.i18n.localize("dynamic-environment-control.Setting.IsIndoorScene.Hint")}</p>
         </div>
     `;
-    // Changed: Target the form-group containing the "Weather Effect" label within the "Ambience" tab
-    html.find('.tab[data-tab="ambient"] .form-group label:contains("Weather Effect")').closest('.form-group').after(htmlContent);
+
+    // NEW: Target the form-group containing the label whose 'for' attribute includes "WeatherEffect"
+    const weatherEffectFormGroup = html.find('label[for*="WeatherEffect"]').closest('.form-group');
+
+    if (weatherEffectFormGroup.length > 0) {
+        weatherEffectFormGroup.after(htmlContent);
+    } else {
+        // Log an error if the target element isn't found
+        console.error("Dynamic Environment Control | Could not find the 'Weather Effect' form group to insert 'Is Indoor Scene?' checkbox. Check Foundry VTT HTML structure.");
+    }
     app.setPosition({height: "auto"}); // Adjust app height if needed
 });
 
