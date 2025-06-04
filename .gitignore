@@ -1,0 +1,14 @@
+# Ignore Foundry VTT symlink target if you use one
+# module.json
+
+# Ignore node modules (if you add a build process later)
+/node_modules
+
+# Ignore editor specific files
+.vscode/
+.DS_Store
+.idea/
+
+# Ignore distribution files
+/dist
+*.zip

@@ -1,0 +1,47 @@
+{
+    "id": "dynamic-environment-control",
+    "title": "Dynamic Environment Control (PF2e)",
+    "description": "Adds intelligent weather effects (integrates with FXMaster) and automated movement penalties for PF2e based on indoor/outdoor status and weather conditions.",
+    "version": "0.0.1",
+    "authors": [
+      {
+        "name": "YOUR_NAME_ALIAS",
+        "url": "YOUR_WEBSITE_URL",
+        "discord": "YOUR_DISCORD_TAG"
+      }
+    ],
+    "esmodules": ["scripts/main.mjs"],
+    "styles": ["styles/main.css"],
+    "languages": [
+      {
+        "lang": "en",
+        "path": "lang/en.json"
+      }
+    ],
+    "dependencies": [
+      {
+        "name": "fxmaster",
+        "type": "module",
+        "manifest": "https://github.com/freeze00/FXMaster/releases/latest/download/module.json",
+        "url": "https://github.com/freeze00/FXMaster",
+        "minimumVersion": "2.0.0",
+        "recommendedVersion": "2.0.0",
+        "verified": "2.0.0"
+      },
+      {
+        "name": "lib-wrapper",
+        "type": "module",
+        "manifest": "https://github.com/ruidisson/lib-wrapper/releases/latest/download/module.json",
+        "url": "https://github.com/ruidisson/lib-wrapper",
+        "minimumVersion": "1.12.0",
+        "recommendedVersion": "1.12.0",
+        "verified": "1.12.0"
+      }
+    ],
+    "systems": ["pf2e"],
+    "compatibleCoreVersion": "12",
+    "minimumCoreVersion": "12",
+    "url": "YOUR_GITHUB_REPO_URL",
+    "manifest": "YOUR_GITHUB_REPO_URL/releases/latest/download/module.json",
+    "download": "YOUR_GITHUB_REPO_URL/releases/latest/download/dynamic-environment-control.zip"
+  }
