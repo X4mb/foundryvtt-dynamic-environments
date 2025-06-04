@@ -4,22 +4,29 @@
   "dynamic-environment-control.Weather.HeavyRain": "Heavy Rain",
   "dynamic-environment-control.Weather.Snow": "Snow",
   "dynamic-environment-control.Weather.Blizzard": "Blizzard",
+  "dynamic-environment-control.Weather.Rain": "Rain",
+  "dynamic-environment-control.Weather.RainStorm": "Rain Storm",
+  "dynamic-environment-control.Weather.Fog": "Fog",
+  "dynamic-environment-control.Weather.AutumnLeaves": "Autumn Leaves",
 
-  "dynamic-environment-control.Setting.EnableIndoorWeatherMasking.Name": "Enable Indoor Weather Masking",
-  "dynamic-environment-control.Setting.EnableIndoorWeatherMasking.Hint": "When enabled, FXMaster weather effects will be masked inside Drawings marked as an 'Indoor Zone'.",
+  "dynamic-environment-control.Setting.IsIndoorScene.Name": "Is Indoor Scene?",
+  "dynamic-environment-control.Setting.IsIndoorScene.Hint": "Check this if the scene represents an indoor environment where weather effects and penalties should NOT apply.",
 
   "dynamic-environment-control.Setting.EnableWeatherMovementPenalties.Name": "Enable Weather Movement Penalties",
-  "dynamic-environment-control.Setting.EnableWeatherMovementPenalties.Hint": "When enabled, movement speed will be automatically reduced for tokens outdoors based on current weather.",
+  "dynamic-environment-control.Setting.EnableWeatherMovementPenalties.Hint": "When enabled, movement speed will be automatically reduced for tokens in OUTDOOR areas based on current weather.",
 
   "dynamic-environment-control.Setting.CurrentWorldWeather.Name": "Current World Weather",
   "dynamic-environment-control.Setting.CurrentWorldWeather.Hint": "Sets the current global weather condition for movement penalties.",
 
   "dynamic-environment-control.Setting.LightRainSpeedPenalty.Name": "Light Rain Speed Penalty (ft)",
-  "dynamic-environment-control.Setting.LightRainSpeedPenalty.Hint": "The amount of movement speed (in feet) to reduce for tokens in light rain. Set to 0 for no penalty. (PF2e: typically no penalty)",
+  "dynamic-environment-control.Setting.LightRainSpeedPenalty.Hint": "The amount of movement speed (in feet) to reduce for tokens in light rain. Set to 0 for no penalty. (PF2e: typically minor difficult terrain)",
 
   "dynamic-environment-control.Setting.HeavyRainSpeedPenalty.Name": "Heavy Rain Speed Penalty (ft)",
-  "dynamic-environment-control.Setting.HeavyRainSpeedPenalty.Hint": "The amount of movement speed (in feet) to reduce for tokens in heavy rain. Set to 0 for no penalty. (PF2e: ultra difficult terrain)",
+  "dynamic-environment-control.Setting.HeavyRainSpeedPenalty.Hint": "The amount of movement speed (in feet) to reduce for tokens in heavy rain/rain storm. Set to 0 for no penalty. (PF2e: difficult terrain)",
 
   "dynamic-environment-control.Setting.SnowSpeedPenalty.Name": "Snow Speed Penalty (ft)",
-  "dynamic-environment-control.Setting.SnowSpeedPenalty.Hint": "The amount of movement speed (in feet) to reduce for tokens in snow. Set to 0 for no penalty. (PF2e: difficult terrain)"
+  "dynamic-environment-control.Setting.SnowSpeedPenalty.Hint": "The amount of movement speed (in feet) to reduce for tokens in snow. Set to 0 for no penalty. (PF2e: difficult terrain)",
+
+  "dynamic-environment-control.Setting.BlizzardSpeedPenalty.Name": "Blizzard Speed Penalty (ft)",
+  "dynamic-environment-control.Setting.BlizzardSpeedPenalty.Hint": "The amount of movement speed (in feet) to reduce for tokens in blizzard. Set to 0 for no penalty. (PF2e: greater difficult terrain/immobilized)"
 }

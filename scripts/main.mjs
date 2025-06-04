@@ -2,15 +2,7 @@
 Hooks.on("init", () => {
     console.log("Dynamic Environment Control | Initializing module...");
 
-    // Register module settings
-    game.settings.register("foundryvtt-dynamic-environments", "enableIndoorWeatherMasking", {
-        name: "dynamic-environment-control.Setting.EnableIndoorWeatherMasking.Name",
-        hint: "dynamic-environment-control.Setting.EnableIndoorWeatherMasking.Hint",
-        scope: "world",
-        config: true,
-        type: Boolean,
-        default: true
-    });
+    // REMOVED: enableIndoorWeatherMasking setting (no longer FXMaster dependent)
 
     game.settings.register("foundryvtt-dynamic-environments", "enableWeatherMovementPenalties", {
         name: "dynamic-environment-control.Setting.EnableWeatherMovementPenalties.Name",
@@ -21,7 +13,11 @@ Hooks.on("init", () => {
         default: true
     });
 
-    // Register the "Current World Weather" dropdown setting
+    // NOTE: The 'Current World Weather' setting is now for *global* setting,
+    // but we will primarily use the SCENE'S built-in weather effect.
+    // This setting might be removed later if it's no longer needed,
+    // or repurposed for manual override.
+    // For now, let's keep it as a fallback/display of current weather.
     game.settings.register("foundryvtt-dynamic-environments", "currentWorldWeather", {
         name: "dynamic-environment-control.Setting.CurrentWorldWeather.Name",
         hint: "dynamic-environment-control.Setting.CurrentWorldWeather.Hint",
@@ -30,16 +26,18 @@ Hooks.on("init", () => {
         type: String,
         choices: {
             "clear": "dynamic-environment-control.Weather.Clear",
-            "light-rain": "dynamic-environment-control.Weather.LightRain",
-            "heavy-rain": "dynamic-environment-control.Weather.HeavyRain",
-            "snow": "dynamic-environment-control.Weather.Snow",
-            "blizzard": "dynamic-environment-control.Weather.Blizzard"
+            "Rain": "dynamic-environment-control.Weather.Rain", // Match built-in names
+            "Rain Storm": "dynamic-environment-control.Weather.RainStorm", // Match built-in names
+            "Fog": "dynamic-environment-control.Weather.Fog", // Not directly penalized in this example
+            "Snow": "dynamic-environment-control.Weather.Snow", // Match built-in names
+            "Blizzard": "dynamic-environment-control.Weather.Blizzard", // Match built-in names
+            "Autumn Leaves": "dynamic-environment-control.Weather.AutumnLeaves" // Not penalized
         },
         default: "clear",
         onChange: value => {
-            console.log("Dynamic Environment Control | World Weather changed to:", value);
-            // TODO: Potentially trigger a re-evaluation of token speeds on the current scene
-            // Or apply/remove specific PF2e conditions here based on weather.
+            console.log("Dynamic Environment Control | Global World Weather setting changed to:", value);
+            // This global setting is now less critical as we'll read from scene.data.weather
+            // You might want to update tokens on the current scene when this changes.
         }
     });
 
@@ -49,7 +47,7 @@ Hooks.on("init", () => {
         scope: "world",
         config: true,
         type: Number,
-        default: 0,
+        default: 5, // Default for light rain, typically minor difficult terrain
         range: { min: 0, max: 100, step: 5 }
     });
 
@@ -59,7 +57,7 @@ Hooks.on("init", () => {
         scope: "world",
         config: true,
         type: Number,
-        default: 0,
+        default: 10, // Default for heavy rain/rain storm, typically difficult terrain
         range: { min: 0, max: 100, step: 5 }
     });
 
@@ -69,7 +67,18 @@ Hooks.on("init", () => {
         scope: "world",
         config: true,
         type: Number,
-        default: 0,
+        default: 10, // Default for snow, typically difficult terrain
+        range: { min: 0, max: 100, step: 5 }
+    });
+
+    // New penalty setting for Blizzard
+    game.settings.register("foundryvtt-dynamic-environments", "blizzardSpeedPenalty", {
+        name: "dynamic-environment-control.Setting.BlizzardSpeedPenalty.Name",
+        hint: "dynamic-environment-control.Setting.BlizzardSpeedPenalty.Hint",
+        scope: "world",
+        config: true,
+        type: Number,
+        default: 20, // Default for blizzard, typically greater difficult terrain or more severe
         range: { min: 0, max: 100, step: 5 }
     });
 });
@@ -80,26 +89,33 @@ Hooks.on("ready", () => {
     if (game.modules.get("foundryvtt-dynamic-environments")?.active) {
         console.log("Dynamic Environment Control | Module is active and ready!");
 
+        // Set the global "Current World Weather" setting to match the active scene's weather
+        // This makes the global setting more informative, though not directly used for penalties now.
+        if (canvas.scene && canvas.scene.data.weather) {
+            game.settings.set("foundryvtt-dynamic-environments", "currentWorldWeather", canvas.scene.data.weather);
+        }
+
         // --- Core Module Logic Starts Here ---
-        // You will add your main functionality here.
     }
 });
 
-// Hook to add a checkbox to the Scene Configuration for "Is Outdoor Scene"
+// Hook to add a checkbox to the Scene Configuration for "Is Indoor Scene?"
 Hooks.on("renderSceneConfig", (app, html, data) => {
-    const isOutdoorScene = app.document.getFlag("foundryvtt-dynamic-environments", "isOutdoorScene");
-    const checked = isOutdoorScene === true ? "checked" : "";
+    // Get current value for the checkbox
+    const isIndoorScene = app.document.getFlag("foundryvtt-dynamic-environments", "isIndoorScene");
+    const checked = isIndoorScene === true ? "checked" : "";
     const htmlContent = `
         <div class="form-group">
-            <label>Is Outdoor Scene?</label>
+            <label>${game.i18n.localize("dynamic-environment-control.Setting.IsIndoorScene.Name")}</label>
             <div class="form-fields">
-                <input type="checkbox" name="flags.foundryvtt-dynamic-environments.isOutdoorScene" data-dtype="Boolean" ${checked}>
+                <input type="checkbox" name="flags.foundryvtt-dynamic-environments.isIndoorScene" data-dtype="Boolean" ${checked}>
             </div>
-            <p class="hint">Check this if the scene represents an outdoor environment where weather penalties apply.</p>
+            <p class="hint">${game.i18n.localize("dynamic-environment-control.Setting.IsIndoorScene.Hint")}</p>
         </div>
     `;
-    // Changed: Target the 'Navigation Name' input field, find its parent form-group, and insert after it.
-    html.find('input[name="navigation"]').closest('.form-group').after(htmlContent);
+    // Target the select element for "Weather Effect" and insert after its parent form-group
+    // Based on your screenshot, it's <select name="weather"> within a form-group.
+    html.find('select[name="weather"]').closest('.form-group').after(htmlContent);
     app.setPosition({height: "auto"}); // Adjust app height if needed
 });
 
@@ -116,34 +132,37 @@ Hooks.on("preUpdateToken", (scene, token, updates, options, userId) => {
         return true; // Not a movement update
     }
 
-    // Get the current scene's outdoor status
-    const isOutdoorScene = scene.getFlag("foundryvtt-dynamic-environments", "isOutdoorScene");
-    if (!isOutdoorScene) {
-        console.log(`Dynamic Environment Control | Token ${token.name} is in an indoor scene (or scene not marked outdoor), no penalty applied.`);
-        return true; // No penalty if scene is not explicitly marked as outdoor
+    // Get the current scene's indoor status
+    const isIndoorScene = scene.getFlag("foundryvtt-dynamic-environments", "isIndoorScene");
+    // If the scene is marked as indoor, no penalty
+    if (isIndoorScene) {
+        console.log(`Dynamic Environment Control | Token ${token.name} is in an indoor scene, no penalty applied.`);
+        return true;
     }
 
-    const currentWeather = game.settings.get("foundryvtt-dynamic-environments", "currentWorldWeather");
+    // Get the built-in weather effect for the current scene
+    const sceneWeatherEffect = scene.data.weather || "clear"; // Default to "clear" if no weather is set
     let penalty = 0;
 
-    // Determine penalty based on current world weather setting
-    switch (currentWeather) {
-        case "light-rain":
+    // Determine penalty based on current scene's weather effect
+    switch (sceneWeatherEffect) {
+        case "Rain": // Light Rain equivalent
             penalty = game.settings.get("foundryvtt-dynamic-environments", "lightRainSpeedPenalty");
             break;
-        case "heavy-rain":
+        case "Rain Storm": // Heavy Rain equivalent
             penalty = game.settings.get("foundryvtt-dynamic-environments", "heavyRainSpeedPenalty");
             break;
-        case "snow":
+        case "Snow":
             penalty = game.settings.get("foundryvtt-dynamic-environments", "snowSpeedPenalty");
             break;
-        case "blizzard":
-            // For blizzard, let's say it's heavy snow penalty + an additional factor
-            penalty = game.settings.get("foundryvtt-dynamic-environments", "snowSpeedPenalty") * 1.5;
+        case "Blizzard":
+            penalty = game.settings.get("foundryvtt-dynamic-environments", "blizzardSpeedPenalty");
             break;
-        case "clear":
+        case "Fog": // Fog typically doesn't affect movement speed directly in PF2e, but visibility.
+        case "Autumn Leaves": // Aesthetic
+        case "clear": // Clear weather
         default:
-            penalty = 0; // No penalty for clear weather
+            penalty = 0; // No penalty for other effects or clear weather
             break;
     }
 
@@ -151,17 +170,27 @@ Hooks.on("preUpdateToken", (scene, token, updates, options, userId) => {
         return true; // No penalty to apply
     }
 
-    // --- APPLYING THE PENALTY (PF2e Specific) ---
-    // This part is currently illustrative. The actual implementation for PF2e
-    // movement penalties is complex and goes beyond simple updates.
-    // It would involve either:
-    // 1. Temporarily modifying the token's actor's speed attributes.
-    // 2. Applying a PF2e-specific condition (e.g., 'Difficult Terrain') to the actor.
-    // 3. Using libWrapper to wrap a core PF2e movement calculation function.
+    // --- APPLYING THE PENALTY (PF2e Specific - Conceptual) ---
+    // This is the core challenge. Modifying actual movement speed in PF2e
+    // involves understanding its system's internal speed calculation.
+    // Simply modifying a token's `updates` object here for `x` or `y` won't
+    // change the underlying speed displayed on the token or calculated by the system.
 
-    // For now, this will show a notification and log to console when a penalty *would* apply.
-    ui.notifications.warn(`Dynamic Environment Control | Attempting to apply ${penalty}ft movement penalty to ${token.name} due to ${currentWeather}! (Actual PF2e movement modification needs implementation)`);
-    console.log(`Dynamic Environment Control | Applied ${penalty}ft movement penalty to ${token.name} due to ${currentWeather}.`);
+    // For PF2e, you typically interact with the Actor's `system.attributes.speed`
+    // or apply conditions that impose difficult terrain or other movement reductions.
 
-    return true; // Always return true from preUpdateToken to allow the movement to proceed.
+    // For now, we will notify the GM and log to console for visibility.
+    // This confirms your module is correctly detecting conditions and calculating penalties.
+    ui.notifications.warn(`Dynamic Environment Control | Applying ${penalty}ft movement penalty to ${token.name} due to ${sceneWeatherEffect}! (Actual PF2e movement modification needs implementation)`);
+    console.log(`Dynamic Environment Control | Applied ${penalty}ft movement penalty to ${token.name} due to ${sceneWeatherEffect}.`);
+
+    // To truly modify PF2e movement, you might need to:
+    // A) Use libWrapper to wrap PF2e's `Token.prototype._getMovementSpeed` (or similar) method.
+    // B) Apply a temporary PF2e condition (e.g., 'Difficult Terrain') to the token's actor.
+    //    This involves calling `token.actor.createEmbeddedDocuments("Item", [{ type: "condition", ... }])`.
+    //    You'd need to define the condition item JSON first.
+    // C) Override the token's `getBarAttributes` to display a modified speed,
+    //    but this won't change the actual movement mechanic.
+
+    return true; // Always return true to allow the token update to complete.
 });

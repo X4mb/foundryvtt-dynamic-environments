@@ -1,47 +1,38 @@
 {
-    "id": "foundryvtt-dynamic-environments",
-    "title": "Dynamic Environment Control (PF2e)",
-    "description": "Adds intelligent weather effects (integrates with FXMaster) and automated movement penalties for PF2e based on indoor/outdoor status and weather conditions.",
-    "version": "0.0.1",
-    "authors": [
-      {
-        "name": "Xamb",
-        "url": "https://github.com/X4mb",
-        "discord": "xamb"
-      }
-    ],
-    "esmodules": ["scripts/main.mjs"],
-    "styles": ["styles/main.css"],
-    "languages": [
-      {
-        "lang": "en",
-        "path": "lang/en.json"
-      }
-    ],
-    "dependencies": [
-      {
-        "name": "fxmaster",
-        "type": "module",
-        "manifest": "https://github.com/freeze00/FXMaster/releases/latest/download/module.json",
-        "url": "https://github.com/freeze00/FXMaster",
-        "minimumVersion": "2.0.0",
-        "recommendedVersion": "2.0.0",
-        "verified": "2.0.0"
-      },
-      {
-        "name": "lib-wrapper",
-        "type": "module",
-        "manifest": "https://github.com/ruidisson/lib-wrapper/releases/latest/download/module.json",
-        "url": "https://github.com/ruidisson/lib-wrapper",
-        "minimumVersion": "1.12.0",
-        "recommendedVersion": "1.12.0",
-        "verified": "1.12.0"
-      }
-    ],
-    "systems": ["pf2e"],
-    "compatibleCoreVersion": "13",
-    "minimumCoreVersion": "13",
-    "url": "https://github.com/X4mb/foundryvtt-dynamic-environments",
-    "manifest": "https://github.com/X4mb/foundryvtt-dynamic-environments/releases/latest/download/module.json",
-    "download": "https://github.com/X4mb/foundryvtt-dynamic-environments/releases/latest/download/dynamic-environment-control.zip"
-  }
+  "id": "foundryvtt-dynamic-environments",
+  "title": "Dynamic Environment Control (PF2e)",
+  "description": "Adds intelligent weather effects and automated movement penalties for PF2e based on indoor/outdoor status and weather conditions using Foundry's built-in weather.",
+  "version": "0.0.1",
+  "authors": [
+    {
+      "name": "Xamb",
+      "url": "https://github.com/X4mb",
+      "discord": "xamb"
+    }
+  ],
+  "esmodules": ["scripts/main.mjs"],
+  "styles": ["styles/main.css"],
+  "languages": [
+    {
+      "lang": "en",
+      "path": "lang/en.json"
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "lib-wrapper",
+      "type": "module",
+      "manifest": "https://github.com/ruidisson/lib-wrapper/releases/latest/download/module.json",
+      "url": "https://github.com/ruidisson/lib-wrapper",
+      "minimumVersion": "1.12.0",
+      "recommendedVersion": "1.12.0",
+      "verified": "1.12.0"
+    }
+  ],
+  "systems": ["pf2e"],
+  "compatibleCoreVersion": "13",
+  "minimumCoreVersion": "13",
+  "url": "https://github.com/X4mb/foundryvtt-dynamic-environments",
+  "manifest": "https://github.com/X4mb/foundryvtt-dynamic-environments/releases/latest/download/module.json",
+  "download": "https://github.com/X4mb/foundryvtt-dynamic-environments/releases/latest/download/dynamic-environment-control.zip"
+}
